@@ -13,7 +13,7 @@ redis_url = os.getenv('REDIS_URL')
 #  manually set redis url
 # Redis Configuration
 redis_url = "redis://default:BVLhJmQCYdYPzlYaOUNAzgQGPYpTrzKp@redis.railway.internal:6379"
-print(f"Connecting to Redis at: {redis_url[:8]}...") 
+print(f"Connecting to Redis at: {redis_url}") 
 
 if redis_url:
     print(f"Found Redis URL from environment variable")
