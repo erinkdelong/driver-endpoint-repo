@@ -12,7 +12,7 @@ print("Available environment variables:", [k for k in os.environ.keys()])
 redis_url = os.getenv('REDIS_URL')
 #  manually set redis url
 # Redis Configuration
-redis_url = "redis://default:BVLhJmQCYdYPzlYaOUNAzgQGPYpTrzKp@redis.railway.internal:6379"
+# redis_url = "redis://default:BVLhJmQCYdYPzlYaOUNAzgQGPYpTrzKp@redis.railway.internal:6379"
 print(f"Connecting to Redis at: {redis_url}") 
 
 if redis_url:
@@ -122,7 +122,8 @@ def test_redis():
             "redis_status": "error",
             "error": str(e)
         }), 500
-    
+
+@app.route('/create-test-user', methods=['POST'])   
 def create_test_user():
     try:
         # Example user data
