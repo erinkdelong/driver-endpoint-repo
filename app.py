@@ -52,7 +52,7 @@ def home():
 @app.route('/get_user_info')
 def get_user_info():
     params = request.args
-    phone_number = params.get('phone_number')
+    phone_number = params.get('phone')
     print(f"Phone number received: {phone_number}")
     if not phone_number:
         return jsonify({'error': 'Phone number is required'}), 400
