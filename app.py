@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 # Redis Configuration
 redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+print(f"Connecting to Redis at: {redis_url[:8]}...") 
 
 # Parse the Redis URL and create client
 try:
