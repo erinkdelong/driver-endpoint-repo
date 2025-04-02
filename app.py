@@ -25,7 +25,8 @@ def get_uder_info():
     # Check if user exists in Redis
     user_info = redis_client.get(phone_number)
     if user_info:
-        return jsonify({'user_info': user_info.decode('utf-8'), }), 200
+        # return jsonify({'user_info': user_info.decode('utf-8'), }), 200
+        return jsonify({'success': "user found"}), 200
     else:
         return jsonify({'error': 'User not found'}), 404
 
