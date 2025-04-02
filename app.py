@@ -1,14 +1,24 @@
 from flask import Flask, request, jsonify
 import redis
 import os
+from urllib.parse import urlparse
 
 
 app = Flask(__name__)
 
+# Redis Configuration
+redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+
+# Parse the Redis URL and create client
+try:
+    redis_client = redis.from_url(redis_url, decode_responses=True)
+except Exception as e:
+    print(f"Redis connection error: {str(e)}")
+
 # Connect to Redis
-redis_host = os.environ.get('REDIS_HOST', 'localhost')
-redis_port = int(os.environ.get('REDIS_PORT', 6379))    
-redis_client = redis.Redis(host=redis_host, port=redis_port)
+# redis_host = os.environ.get('REDIS_HOST', 'localhost')
+# redis_port = int(os.environ.get('REDIS_PORT', 6379))    
+# redis_client = redis.Redis(host=redis_host, port=redis_port)
 
 @app.route('/')
 def home():
