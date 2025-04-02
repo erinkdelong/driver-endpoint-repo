@@ -10,6 +10,17 @@ print("Available environment variables:", [k for k in os.environ.keys()])
 
 # Redis Configuration
 redis_url = os.getenv('REDIS_URL')
+#  manually set redis url
+# Redis Configuration
+redis_url = "redis://default:BVLhJmQCYdYPzlYaOUNAzgQGPYpTrzKp@redis.railway.internal:6379"
+print(f"Connecting to Redis at: {redis_url[:8]}...") 
+
+if redis_url:
+    print(f"Found Redis URL from environment variable")
+else:
+    print("No Redis URL found in environment, using localhost")
+    redis_url = 'redis://localhost:6379'
+
 print(f"Connecting to Redis at: {redis_url[:8]}...") 
 
 if redis_url:
