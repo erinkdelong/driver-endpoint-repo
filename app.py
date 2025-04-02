@@ -15,5 +15,5 @@ def get_data():
     return 'Hello, World- in data endpoint!'
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5001))  # Defaults to 5001 if PORT is not set
+    port = int(os.environ.get("PORT", 5000))  # Defaults to 5001 if PORT is not set
     app.run(host="0.0.0.0", port=port)
