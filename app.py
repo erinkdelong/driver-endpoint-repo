@@ -111,6 +111,35 @@ def test_redis():
             "redis_status": "error",
             "error": str(e)
         }), 500
+    
+
+def create_test_user():
+    try:
+        # Example user data
+        user_data = {
+            'phone': '9259898099',
+            'name': 'Erin',
+            'mc_number': '98238829',
+            'load_number': '12324',
+            'email': 'erinkdelong@gmail.com'
+        }
+        
+        # Generate user ID
+        user_id = f"user:{redis_client.incr('user:id:counter')}"
+        
+        # Store user data
+        redis_client.hset(user_id, mapping=user_data)
+        
+        # Create phone reference
+        redis_client.set(f"phone:{user_data['phone']}", user_id)
+        
+        return jsonify({
+            'message': 'User created',
+            'user_id': user_id,
+            'data': user_data
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))  # Defaults to 5001 if PORT is not set
@@ -137,9 +166,9 @@ if __name__ == '__main__':
         "email": "ari@gmail.com"
     }
 
-    create_user("1234567890", user_data1)
-    create_user("9259898099", user_data2)
-    create_user("5108981234", user_data3)
+    # create_user("1234567890", user_data1)
+    # create_user("9259898099", user_data2)
+    # create_user("5108981234", user_data3)
 
 
 
