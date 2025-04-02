@@ -137,9 +137,9 @@ if __name__ == '__main__':
         "email": "ari@gmail.com"
     }
 
-    # create_user("1234567890", user_data1)
-    # create_user("9259898099", user_data2)
-    # create_user("5108981234", user_data3)
+    create_user("1234567890", user_data1)
+    create_user("9259898099", user_data2)
+    create_user("5108981234", user_data3)
 
 
 
