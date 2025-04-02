@@ -57,6 +57,17 @@ def get_user_info():
     if not phone_number:
         return jsonify({'error': 'Phone number is required'}), 400
     
+     # Construct key and look up user
+    phone_key = f"phone:{phone_number}"
+    print(f"Looking up Redis key: {phone_key}")
+
+    user_id = redis_client.get(phone_key)
+    print(f"Redis lookup result for {phone_key}: {user_id}")
+    
+    if not user_id:
+        print(f"No user ID found for phone: {phone_number}")
+        return jsonify({'error': 'User not found'}), 404
+            
 
     # Check if user exists in Redis
     user_info = get_user_by_phone(str(phone_number))
