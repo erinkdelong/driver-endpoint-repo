@@ -151,6 +151,33 @@ def create_test_user():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500  
+    
+
+@app.route('/debug-redis', methods=['GET'])
+def debug_redis():
+    try:
+        # Get all keys
+        all_keys = redis_client.keys('*')
+        
+        # Get all phone references
+        phone_refs = {}
+        for key in all_keys:
+            if key.startswith('phone:'):
+                phone_refs[key] = redis_client.get(key)
+        
+        # Get all user data
+        users = {}
+        for key in all_keys:
+            if key.startswith('user:'):
+                users[key] = redis_client.hgetall(key)
+                
+        return jsonify({
+            'all_keys': all_keys,
+            'phone_references': phone_refs,
+            'users': users
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))  # Defaults to 5001 if PORT is not set
