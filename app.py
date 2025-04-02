@@ -12,6 +12,7 @@ redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
 # Parse the Redis URL and create client
 try:
     redis_client = redis.from_url(redis_url, decode_responses=True)
+    print(f"Redis client created: {redis_client}")
 except Exception as e:
     print(f"Redis connection error: {str(e)}")
 
@@ -29,6 +30,7 @@ def home():
 def get_user_info():
     params = request.args
     phone_number = params.get('phone_number')
+    print(f"Phone number received: {phone_number}")
     if not phone_number:
         return jsonify({'error': 'Phone number is required'}), 400
     
@@ -38,6 +40,7 @@ def get_user_info():
 
     if user_info:
         decoded_info = {k.decode('utf-8'): v.decode('utf-8') for k, v in user_info.items()}
+        print(f"Decoded info: {decoded_info}")
         # return jsonify({'user_info': user_info.decode('utf-8'), }), 200
         return jsonify({'user_info': dict(decoded_info)}), 200
     else:
