@@ -10,12 +10,21 @@ app = Flask(__name__)
 redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
 print(f"Connecting to Redis at: {redis_url[:8]}...") 
 
-# Parse the Redis URL and create client
+if redis_url:
+    print(f"Found Redis URL from environment variable")
+else:
+    print("No Redis URL found in environment, using localhost")
+    redis_url = 'redis://localhost:6379'
+
 try:
+    # Connect using the Redis URL
+    print("Attempting to connect to Redis...")
     redis_client = redis.from_url(redis_url, decode_responses=True)
-    print(f"Redis client created: {redis_client}")
+    # Test the connection
+    redis_client.ping()
+    print("Successfully connected to Redis!")
 except Exception as e:
-    print(f"Redis connection error: {str(e)}")
+    print(f"Failed to connect to Redis: {str(e)}")
 
 # Connect to Redis
 # redis_host = os.environ.get('REDIS_HOST', 'localhost')
