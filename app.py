@@ -164,6 +164,7 @@ def create_test_user():
         return jsonify({'error': str(e)}), 500 
 
 @app.route('/edit_user_info', methods=['POST'])
+# This lets us add a pickup number to a load number
 def edit_user_info():
     try:
         phone = "9259898099"
@@ -285,6 +286,39 @@ def inspect_key(key):
             
         return jsonify(result)
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/get_pickup_number', methods=['GET'])
+def get_pickup_number():
+    try:
+        phone_number = request.args.get('phone')
+        if not phone_number:
+            return jsonify({'error': 'Phone number is required'}), 400
+
+        # First get user info to get their load number
+        user_id = redis_client.get(f"phone:{phone_number}")
+        if not user_id:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Get user's load number
+        user_info = redis_client.hgetall(user_id)
+        load_number = user_info.get('load_number')
+        if not load_number:
+            return jsonify({'error': 'No load number found for user'}), 404
+
+        # Get pickup number associated with the load
+        pickup_number = redis_client.hget(f"load:{load_number}", "pickup_number")
+        if not pickup_number:
+            return jsonify({'error': 'No pickup number found for this load'}), 404
+
+        return jsonify({
+            'phone_number': phone_number,
+            'load_number': load_number,
+            'pickup_number': pickup_number
+        }), 200
+    except Exception as e:
+        print(f"Error getting pickup number: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
