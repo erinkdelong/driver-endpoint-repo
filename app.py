@@ -78,6 +78,28 @@ def get_user_by_phone(phone_number):
     # Then get the full user data
     return redis_client.hgetall(user_id)
 
+@app.route('/test-redis', methods=['GET'])
+def test_redis():
+    try:
+        # Try to ping Redis
+        result = redis_client.ping()
+        # Try to get Redis info
+        info = redis_client.info()
+        return jsonify({
+            "redis_ping": result,
+            "redis_status": "connected",
+            "redis_info": {
+                "version": info.get('redis_version'),
+                "connected_clients": info.get('connected_clients'),
+                "used_memory_human": info.get('used_memory_human')
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            "redis_status": "error",
+            "error": str(e)
+        }), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))  # Defaults to 5001 if PORT is not set
     app.run(host="0.0.0.0", port=port)
