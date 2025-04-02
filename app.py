@@ -6,8 +6,10 @@ from urllib.parse import urlparse
 
 app = Flask(__name__)
 
+print("Available environment variables:", [k for k in os.environ.keys()])
+
 # Redis Configuration
-redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')
+redis_url = os.getenv('REDIS_URL')
 print(f"Connecting to Redis at: {redis_url[:8]}...") 
 
 if redis_url:
