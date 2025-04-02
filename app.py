@@ -161,7 +161,18 @@ def create_test_user():
             'data': user_data
         })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500  
+        return jsonify({'error': str(e)}), 500 
+
+@app.route('/edit_user_info', methods=['POST']) 
+def edit_user_info():
+    # Key for the user (phone number)
+    phone_number = "9259898099"
+
+    # Modify the existing hash fields
+    # 1. Update the user's age (change to 35)
+    # 2. Add a new field "address"
+    redis_client.hset(phone_number, "pickup_number", "0987")
+    return jsonify({'message': 'User info updated'}), 200
     
 
 @app.route('/debug-redis', methods=['GET'])
