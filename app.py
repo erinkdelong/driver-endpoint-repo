@@ -159,23 +159,57 @@ def debug_redis():
         # Get all keys
         all_keys = redis_client.keys('*')
         
-        # Get all phone references
-        phone_refs = {}
-        for key in all_keys:
-            if key.startswith('phone:'):
-                phone_refs[key] = redis_client.get(key)
-        
-        # Get all user data
-        users = {}
-        for key in all_keys:
-            if key.startswith('user:'):
-                users[key] = redis_client.hgetall(key)
-                
-        return jsonify({
+        # Initialize results
+        result = {
             'all_keys': all_keys,
-            'phone_references': phone_refs,
-            'users': users
-        })
+            'data_by_key': {}
+        }
+        
+        # Check each key's type and get data accordingly
+        for key in all_keys:
+            key_type = redis_client.type(key)
+            result['data_by_key'][key] = {
+                'type': key_type,
+                'value': None
+            }
+            
+            try:
+                if key_type == 'string':
+                    result['data_by_key'][key]['value'] = redis_client.get(key)
+                elif key_type == 'hash':
+                    result['data_by_key'][key]['value'] = redis_client.hgetall(key)
+                elif key_type == 'list':
+                    result['data_by_key'][key]['value'] = redis_client.lrange(key, 0, -1)
+                elif key_type == 'set':
+                    result['data_by_key'][key]['value'] = list(redis_client.smembers(key))
+            except Exception as e:
+                result['data_by_key'][key]['error'] = str(e)
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Add a simple key inspection endpoint
+@app.route('/inspect-key/<key>', methods=['GET'])
+def inspect_key(key):
+    try:
+        key_type = redis_client.type(key)
+        result = {
+            'key': key,
+            'type': key_type,
+            'value': None
+        }
+        
+        if key_type == 'string':
+            result['value'] = redis_client.get(key)
+        elif key_type == 'hash':
+            result['value'] = redis_client.hgetall(key)
+        elif key_type == 'list':
+            result['value'] = redis_client.lrange(key, 0, -1)
+        elif key_type == 'set':
+            result['value'] = list(redis_client.smembers(key))
+            
+        return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
