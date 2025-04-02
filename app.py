@@ -73,10 +73,10 @@ def get_user_info():
     user_info = get_user_by_phone(str(phone_number))
 
     if user_info:
-        decoded_info = {k.decode('utf-8'): v.decode('utf-8') for k, v in user_info.items()}
-        print(f"Decoded info: {decoded_info}")
+        # decoded_info = {k.decode('utf-8'): v.decode('utf-8') for k, v in user_info.items()}
+        print(f"Decoded info: {user_info}")
         # return jsonify({'user_info': user_info.decode('utf-8'), }), 200
-        return jsonify({'user_info': dict(decoded_info)}), 200
+        return jsonify({'user_info': dict(user_info)}), 200
     else:
         return jsonify({'error': 'User not found'}), 404
     
