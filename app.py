@@ -163,16 +163,51 @@ def create_test_user():
     except Exception as e:
         return jsonify({'error': str(e)}), 500 
 
-@app.route('/edit_user_info', methods=['POST']) 
+@app.route('/edit_user_info', methods=['POST'])
 def edit_user_info():
-    # Key for the user (phone number)
-    phone = "9259898099"
-
-    # Modify the existing hash fields
-    # 1. Update the user's age (change to 35)
-    # 2. Add a new field "address"
-    redis_client.hset(phone, "pickup_number", "0987")
-    return jsonify({'message': 'User info updated'}), 200
+    try:
+        phone = "9259898099"
+        load_number = "12324"  # This is the load number from your user data
+        pickup_number = "0987"
+        
+        # Create a key for load-pickup mapping
+        load_key = f"load:{load_number}"
+        
+        # Store the pickup number associated with the load number
+        redis_client.hset(load_key, "pickup_number", pickup_number)
+        
+        # Get the updated info to return
+        load_info = redis_client.hgetall(load_key)
+        
+        return jsonify({
+            'message': 'Load info updated',
+            'load_number': load_number,
+            'load_info': load_info
+        }), 200
+    except Exception as e:
+        print(f"Error updating load info: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/delete_all_users', methods=['DELETE'])
+def delete_all_users():
+    try:
+        # Get all user and phone keys
+        user_keys = redis_client.keys('user:*')
+        phone_keys = redis_client.keys('phone:*')
+        load_keys = redis_client.keys('load:*')
+        
+        # Delete all keys
+        for key in user_keys + phone_keys + load_keys:
+            redis_client.delete(key)
+        
+        return jsonify({
+            'message': 'All users deleted',
+            'users_deleted': len(user_keys),
+            'phone_refs_deleted': len(phone_keys),
+            'load_refs_deleted': len(load_keys)
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
 
 @app.route('/debug-redis', methods=['GET'])
