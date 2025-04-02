@@ -210,6 +210,23 @@ def delete_all_users():
         return jsonify({'error': str(e)}), 500
     
 
+@app.route('/cleanup', methods=['DELETE'])
+def cleanup():
+    try:
+        # Delete the specific key
+        redis_client.delete("9259898099")
+        
+        # Verify deletion
+        all_keys = redis_client.keys('*')
+        
+        return jsonify({
+            'message': 'Cleanup completed',
+            'remaining_keys': all_keys
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
 @app.route('/debug-redis', methods=['GET'])
 def debug_redis():
     try:
