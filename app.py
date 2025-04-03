@@ -6,6 +6,9 @@ from urllib.parse import urlparse
 
 app = Flask(__name__)
 
+# FMCSA key
+FMCSA_KEY = os.getenv('FMCSA_KEY')
+
 print("Available environment variables:", [k for k in os.environ.keys()])
 
 # Redis Configuration
