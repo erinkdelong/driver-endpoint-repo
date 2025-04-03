@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import redis
-import os
+import os, requests
 from urllib.parse import urlparse
 
 
@@ -320,6 +320,31 @@ def get_pickup_number():
     except Exception as e:
         print(f"Error getting pickup number: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/verify_carrier', methods=['GET'])
+def verify_carrier():
+    mc_number = request.args.get('mc_number')
+    if not(mc_number):
+        return jsonify({"error": "mc_number parameter is required"}), 400
+
+    try:
+        url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/{mc_number}?webKey={FMCSA_KEY}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            isAllowedToOperate = data['content'][0]['carrier']['allowedToOperate']
+            if isAllowedToOperate:
+                legal_name = data["content"][0]["carrier"]["legalName"]
+                return jsonify({'verified': True, "legal_name": legal_name}), 200
+            else:
+                return jsonify({"verified" : False}), 200
+        else:
+            return jsonify({"error" : f"Cannot find MC number: {mc_number}"}), 404
+    
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))  # Defaults to 5001 if PORT is not set
