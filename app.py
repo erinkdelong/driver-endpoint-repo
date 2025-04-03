@@ -320,15 +320,15 @@ def debug_redis():
 @app.route('/get_pickup_number', methods=['GET'])
 def get_pickup_number():
     try:
-        phone_number = request.args.get('phone')
         params = request.args
         has_phone = 'phone' in params
         has_mc_and_load = ('mc_number' in params) and ('load_number' in params)
-        if (not phone_number) and not(has_mc_and_load):
+        if not has_phone and not has_mc_and_load:
             return jsonify({'error': 'Phone number or mc and load number is required'}), 400
 
         if has_phone:
         # First get user info to get their load number
+            phone_number = request.args.get('phone')
             user_id = redis_client.get(f"phone:{phone_number}")
             if not user_id:
                 return jsonify({'error': 'User not found'}), 404
