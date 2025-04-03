@@ -362,7 +362,7 @@ def get_pickup_number():
 def verify_carrier():
     mc_number = request.args.get('mc_number')
     if not(mc_number):
-        return jsonify({"error": "mc_number parameter is required"}), 400
+        return jsonify({"error": "mc_number parameter is required", "verified": False}), 400
     
     try:
         url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/{mc_number}?webKey={FMCSA_KEY}"
@@ -377,10 +377,10 @@ def verify_carrier():
             else:
                 return jsonify({"verified": False}), 200
         else:
-            return jsonify({"error": f"Cannot find MC number: {mc_number}"}), 404
+            return jsonify({"error": f"Cannot find MC number: {mc_number}", "verified": False}), 404
     
     except Exception as e:
-        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+        return jsonify({"error": f"Unexpected error: {str(e)}", "verified": False}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))  # Defaults to 5001 if PORT is not set
