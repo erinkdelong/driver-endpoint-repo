@@ -184,9 +184,17 @@ def test_redis():
 def create_test_user():
     try:
         # Example user data
+        # user_data = {
+        #     'phone': '+19259898099',
+        #     'name': 'Erin D',
+        #     'mc_number': '843818',
+        #     'load_number': '3433',
+        #     'email': 'erinkdelong@gmail.com'
+        # }
+
         user_data = {
-            'phone': '+19259898099',
-            'name': 'Erin D',
+            'phone': '+19259898088',
+            'name': 'Erin',
             'mc_number': '843818',
             'load_number': '3433',
             'email': 'erinkdelong@gmail.com'
