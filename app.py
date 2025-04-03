@@ -186,7 +186,7 @@ def create_test_user():
         user_data = {
             'phone': '+19259898099',
             'name': 'Erin',
-            'mc_number': '843818',
+            'mc_number': '812345678910',
             'load_number': '3433',
             'email': 'erinkdelong@gmail.com'
         }
