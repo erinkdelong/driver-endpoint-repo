@@ -347,6 +347,7 @@ def get_pickup_number():
                 return jsonify({'error': 'No load number found for user'}), 404
 
 
+        print(f"load_number right before lookup: {load_number}")
         pickup_number = redis_client.hget(f"load:{load_number}", "pickup_number")
         if not pickup_number:
             return jsonify({'error': f'No pickup number found for this load: {load_number}'}), 404
