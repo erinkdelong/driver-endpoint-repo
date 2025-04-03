@@ -54,24 +54,25 @@ def home():
     return 'Hello, World!'
 
 def get_carrier_status(mc_number):
-    base_url = os.getenv("API_BASE_URL")
-    if not base_url:
-        raise ValueError("API_BASE_URL is not set")
-
-    url = f"{base_url}/verify_carrier?mc_number={mc_number}"
-    print(f"Requesting: {url}")  # Debugging
-
     try:
-        verify_response = requests.get(url)
-        verify_response.raise_for_status()  # Raise an error for HTTP errors
+        base_url = os.getenv("API_BASE_URL")
+        if not base_url:
+            raise ValueError("API_BASE_URL is not set")
 
-        data = verify_response.json()
+        url = f"{base_url}/verify_carrier?mc_number={mc_number}"
+        print(f"Requesting: {url}")  # Debugging
+
+        response = requests.get(url)
+        response.raise_for_status()  # Ensures HTTP errors are raised
+
+        data = response.json()
         is_verified = data.get("verified", False)
-        return is_verified, verify_response
+        return is_verified, response  # Always return two values
 
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")
-        return False, None
+    except Exception as e:
+        print(f"Error in get_carrier_status: {e}")
+        return False, None  # Ensure a consistent tuple return
+
 
 @app.route('/get_user_info')
 def get_user_info():
