@@ -332,6 +332,7 @@ def verify_carrier():
         return jsonify({"error": "mc_number parameter is required"}), 400
 
     try:
+        print(f"FMCSA_KEY: {FMCSA_KEY}")
         url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/{mc_number}?webKey={FMCSA_KEY}"
         response = requests.get(url)
 
