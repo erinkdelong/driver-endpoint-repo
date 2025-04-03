@@ -193,10 +193,10 @@ def create_test_user():
         # }
 
         user_data = {
-            'phone': '+11234567890',
+            'phone': '+19259898099',
             'name': 'Beth',
-            'mc_number': '843818',
-            'load_number': '123',
+            'mc_number': '1234567891011111',
+            'load_number': '123456',
             'email': 'erinkdelong@gmail.com'
         }
         
@@ -221,8 +221,8 @@ def create_test_user():
 # This lets us add a pickup number to a load number
 def edit_user_info():
     try:
-        load_number = "123"  # This is the load number from your user data
-        pickup_number = "222285"
+        load_number = "123456"  # This is the load number from your user data
+        pickup_number = "11111"
         # Create a key for load-pickup mapping
         load_key = f"load:{load_number}"
         
