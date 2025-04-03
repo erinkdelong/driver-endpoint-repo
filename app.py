@@ -328,6 +328,7 @@ def get_pickup_number():
         if has_mc_and_load:
             print("in get_pickup_number-- has mc and load")
             load_number = params.get('load_number')
+            print(f"load_number from mc and load: {load_number}")
             if not load_number:
                 return jsonify({'error': 'No load number found'}), 404
             
@@ -341,6 +342,7 @@ def get_pickup_number():
             # Get user's load number
             user_info = redis_client.hgetall(user_id)
             load_number = user_info.get('load_number')
+            print(f"load_number from phone: {load_number}")
             if not load_number:
                 return jsonify({'error': 'No load number found for user'}), 404
 
