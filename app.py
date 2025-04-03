@@ -82,7 +82,7 @@ def get_user_info():
         mc_number = user_info.get('mc_number')
         if not mc_number:
             return jsonify({'error': 'No mc_number found for user'}), 404
-        verify_data, status_code = verify_carrier()
+        verify_data, status_code = verify_carrier(mc_number)
         # Check verification status
         if status_code != 200 or not verify_data.json().get('verified'):
             return jsonify({
@@ -321,7 +321,7 @@ def get_pickup_number():
         return jsonify({'error': str(e)}), 500
 
 
-# @app.route('/verify_carrier', methods=['GET'])
+@app.route('/verify_carrier', methods=['GET'])
 def verify_carrier():
     mc_number = request.args.get('mc_number')
     if not(mc_number):
