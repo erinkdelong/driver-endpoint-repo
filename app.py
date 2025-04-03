@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 # FMCSA key
 FMCSA_KEY = os.getenv('FMCSA_KEY')
+API_BASE_URL = os.getenv('API_BASE_URL')
 
 print("Available environment variables:", [k for k in os.environ.keys()])
 
@@ -82,11 +83,21 @@ def get_user_info():
             return jsonify({'error': 'No mc_number found for user'}), 404
         
         # Call verify_carrier and get the response
-        verify_response = verify_carrier(mc_number)
-        verify_data = verify_response.json()
+        base_url = os.getenv("API_BASE_URL")  # Set this in your environment variables
+        if not base_url:
+            raise ValueError("API_BASE_URL is not set")
+        url = f"{base_url}/verify_carrier?mc_number={mc_number}"
+        verify_response = requests.get(url)
+
+        if verify_response.status_code == 200:
+            data = verify_response.json()
+            is_verified = data.get("verified", False)
+        else:
+            print(f"Request failed with status code {verify_response.status_code}")
+        
         
         # Check both status code and verified status
-        if verify_response.status_code != 200 or not verify_data.get('verified'):
+        if verify_response.status_code != 200 or not is_verified:
             return jsonify({
                 'user_info': dict(user_info),
                 'carrier_status': 'not_verified'
