@@ -211,7 +211,6 @@ def edit_user_info():
     try:
         load_number = "3433"  # This is the load number from your user data
         pickup_number = "22225"
-        
         # Create a key for load-pickup mapping
         load_key = f"load:{load_number}"
         
