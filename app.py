@@ -54,6 +54,7 @@ def home():
     return 'Hello, World!'
 
 def get_carrier_status(mc_number):
+    print("in get_carrier_status")
     try:
         base_url = os.getenv("API_BASE_URL")
         if not base_url:
@@ -62,7 +63,7 @@ def get_carrier_status(mc_number):
         url = f"{base_url}/verify_carrier?mc_number={mc_number}"
         print(f"Requesting: {url}")  # Debugging
 
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         response.raise_for_status()  # Ensures HTTP errors are raised
 
         data = response.json()
@@ -103,6 +104,7 @@ def get_user_info():
         if not mc_number:
             return jsonify({'error': 'No mc_number found for user'}), 404
         
+        print("about to call get_carrier_status")
         is_verified, verify_response = get_carrier_status(mc_number) 
         print(verify_response)
         
