@@ -170,7 +170,6 @@ def create_test_user():
 # This lets us add a pickup number to a load number
 def edit_user_info():
     try:
-        phone = "+19259898099"
         load_number = "13433"  # This is the load number from your user data
         pickup_number = "111"
         
@@ -266,60 +265,42 @@ def debug_redis():
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-# Add a simple key inspection endpoint
-@app.route('/inspect-key/<key>', methods=['GET'])
-def inspect_key(key):
-    try:
-        key_type = redis_client.type(key)
-        result = {
-            'key': key,
-            'type': key_type,
-            'value': None
-        }
-        
-        if key_type == 'string':
-            result['value'] = redis_client.get(key)
-        elif key_type == 'hash':
-            result['value'] = redis_client.hgetall(key)
-        elif key_type == 'list':
-            result['value'] = redis_client.lrange(key, 0, -1)
-        elif key_type == 'set':
-            result['value'] = list(redis_client.smembers(key))
-            
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
     
 
 @app.route('/get_pickup_number', methods=['GET'])
 def get_pickup_number():
     try:
         phone_number = request.args.get('phone')
-        if not phone_number:
-            return jsonify({'error': 'Phone number is required'}), 400
+        params = request.args
+        has_phone = 'phone' in params
+        has_mc_and_load = ('mc_number' in params) and ('load_number' in params)
+        if (not phone_number) and not(has_mc_and_load):
+            return jsonify({'error': 'Phone number or mc and load number is required'}), 400
 
+        if has_phone:
         # First get user info to get their load number
-        user_id = redis_client.get(f"phone:{phone_number}")
-        if not user_id:
-            return jsonify({'error': 'User not found'}), 404
+            user_id = redis_client.get(f"phone:{phone_number}")
+            if not user_id:
+                return jsonify({'error': 'User not found'}), 404
+            # Get user's load number
+            user_info = redis_client.hgetall(user_id)
+            load_number = user_info.get('load_number')
+            if not load_number:
+                return jsonify({'error': 'No load number found for user'}), 404
 
-        # Get user's load number
-        user_info = redis_client.hgetall(user_id)
-        load_number = user_info.get('load_number')
-        if not load_number:
-            return jsonify({'error': 'No load number found for user'}), 404
+        elif has_mc_and_load:
+            load_number = params.get('load_number')
+            if not load_number:
+                return jsonify({'error': 'No load number found'}), 404
 
-        # Get pickup number associated with the load
         pickup_number = redis_client.hget(f"load:{load_number}", "pickup_number")
         if not pickup_number:
             return jsonify({'error': 'No pickup number found for this load'}), 404
 
         return jsonify({
-            'phone_number': phone_number,
-            'load_number': load_number,
             'pickup_number': pickup_number
         }), 200
+    
     except Exception as e:
         print(f"Error getting pickup number: {str(e)}")
         return jsonify({'error': str(e)}), 500
