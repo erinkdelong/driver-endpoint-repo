@@ -82,7 +82,7 @@ def get_user_info():
         mc_number = user_info.get('mc_number')
         if not mc_number:
             return jsonify({'error': 'No mc_number found for user'}), 404
-        verified_mc_number = verify_carrier()
+        verified_mc_number = verify_carrier().json()
         # Check verification status
         if verified_mc_number.status_code != 200 or not verified_mc_number.json().get('verified'):
             return jsonify({
@@ -130,7 +130,7 @@ def get_user_by_phone(phone_number):
     # Then get the full user data
     return redis_client.hgetall(user_id)
 
-@app.route('/test-redis', methods=['GET'])
+@app.route('/test_redis', methods=['GET'])
 def test_redis():
     try:
         # Try to ping Redis
@@ -152,7 +152,7 @@ def test_redis():
             "error": str(e)
         }), 500
 
-@app.route('/create-test-user', methods=['POST'])   
+@app.route('/create_test_user', methods=['POST'])   
 def create_test_user():
     try:
         # Example user data
@@ -245,7 +245,7 @@ def cleanup():
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/debug-redis', methods=['GET'])
+@app.route('/debug_redis', methods=['GET'])
 def debug_redis():
     try:
         # Get all keys
