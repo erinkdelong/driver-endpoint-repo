@@ -52,6 +52,22 @@ except Exception as e:
 def home():
     return 'Hello, World!'
 
+def get_carrier_status(mc_number):
+    # Call verify_carrier and get the response
+    base_url = os.getenv("API_BASE_URL")  # Set this in your environment variables
+    if not base_url:
+        raise ValueError("API_BASE_URL is not set")
+    url = f"{base_url}/verify_carrier?mc_number={mc_number}"
+    verify_response = requests.get(url)
+
+    if verify_response.status_code == 200:
+        data = verify_response.json()
+        is_verified = data.get("verified", False)
+    else:
+        print(f"Request failed with status code {verify_response.status_code}")
+
+
+    return is_verified, verify_response
 
 @app.route('/get_user_info')
 def get_user_info():
@@ -82,19 +98,8 @@ def get_user_info():
         if not mc_number:
             return jsonify({'error': 'No mc_number found for user'}), 404
         
-        # Call verify_carrier and get the response
-        base_url = os.getenv("API_BASE_URL")  # Set this in your environment variables
-        if not base_url:
-            raise ValueError("API_BASE_URL is not set")
-        url = f"{base_url}/verify_carrier?mc_number={mc_number}"
-        verify_response = requests.get(url)
-
-        if verify_response.status_code == 200:
-            data = verify_response.json()
-            is_verified = data.get("verified", False)
-        else:
-            print(f"Request failed with status code {verify_response.status_code}")
-        
+        is_verified, verify_response = get_carrier_status(mc_number) 
+        print(verify_response)
         
         # Check both status code and verified status
         if verify_response.status_code != 200 or not is_verified:
