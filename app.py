@@ -82,9 +82,9 @@ def get_user_info():
         mc_number = user_info.get('mc_number')
         if not mc_number:
             return jsonify({'error': 'No mc_number found for user'}), 404
-        verified_mc_number = verify_carrier().json()
+        verify_data, status_code = verify_carrier()
         # Check verification status
-        if verified_mc_number.status_code != 200 or not verified_mc_number.json().get('verified'):
+        if status_code != 200 or not verify_data.json().get('verified'):
             return jsonify({
                 'user_info': dict(user_info),
                 'carrier_status': 'not_verified'
