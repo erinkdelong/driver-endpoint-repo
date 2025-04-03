@@ -183,22 +183,21 @@ def test_redis():
 @app.route('/create_test_user', methods=['POST'])   
 def create_test_user():
     try:
-        # Example user data
-        # user_data = {
-        #     'phone': '+19259898099',
-        #     'name': 'Erin D',
-        #     'mc_number': '843818',
-        #     'load_number': '3433',
-        #     'email': 'erinkdelong@gmail.com'
-        # }
-
         user_data = {
             'phone': '+19259898099',
-            'name': 'Beth',
-            'mc_number': '1234567891011111',
-            'load_number': '123456',
+            'name': 'Erin',
+            'mc_number': '843818',
+            'load_number': '3433',
             'email': 'erinkdelong@gmail.com'
         }
+
+        # user_data = {
+        #     'phone': '+19259898099',
+        #     'name': 'Beth',
+        #     'mc_number': '1234567891011111',
+        #     'load_number': '123456',
+        #     'email': 'erinkdelong@gmail.com'
+        # }
         
         # Generate user ID
         user_id = f"user:{redis_client.incr('user:id:counter')}"
@@ -221,8 +220,8 @@ def create_test_user():
 # This lets us add a pickup number to a load number
 def edit_user_info():
     try:
-        load_number = "123456"  # This is the load number from your user data
-        pickup_number = "11111"
+        load_number = "3433"  # This is the load number from your user data
+        pickup_number = "12345"
         # Create a key for load-pickup mapping
         load_key = f"load:{load_number}"
         
