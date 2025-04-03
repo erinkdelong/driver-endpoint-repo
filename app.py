@@ -322,17 +322,17 @@ def get_pickup_number():
 
 
 @app.route('/verify_carrier', methods=['GET'])
-def verify_carrier():
-    mc_number = request.args.get('mc_number')
-    if not(mc_number):
+def verify_carrier(mc_number=None):
+    # If called as a function, use the passed mc_number
+    if mc_number is None:
+        mc_number = request.args.get('mc_number')
+        
+    if not mc_number:
         return jsonify({"error": "mc_number parameter is required"}), 400
 
     try:
-        print(f"FMCSA_KEY: {FMCSA_KEY}")
         url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/{mc_number}?webKey={FMCSA_KEY}"
         response = requests.get(url)
-
-        print(f"Response: {response.json()}")
 
         if response.status_code == 200:
             data = response.json()
@@ -341,9 +341,9 @@ def verify_carrier():
                 legal_name = data["content"][0]["carrier"]["legalName"]
                 return jsonify({'verified': True, "legal_name": legal_name}), 200
             else:
-                return jsonify({"verified" : False}), 200
+                return jsonify({"verified": False}), 200
         else:
-            return jsonify({"error" : f"Cannot find MC number: {mc_number}"}), 404
+            return jsonify({"error": f"Cannot find MC number: {mc_number}"}), 404
     
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
