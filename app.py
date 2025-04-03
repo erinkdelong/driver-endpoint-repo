@@ -332,6 +332,8 @@ def verify_carrier():
         url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/{mc_number}?webKey={FMCSA_KEY}"
         response = requests.get(url)
 
+        print(f"Response: {response.json()}")
+
         if response.status_code == 200:
             data = response.json()
             isAllowedToOperate = data['content'][0]['carrier']['allowedToOperate']
