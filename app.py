@@ -76,21 +76,19 @@ def get_user_info():
     user_info = get_user_by_phone(str(phone_number))
 
     if user_info:
-        # decoded_info = {k.decode('utf-8'): v.decode('utf-8') for k, v in user_info.items()}
         print(f"Decoded info: {user_info}")
-        #  verify the mc_number
         mc_number = user_info.get('mc_number')
         if not mc_number:
             return jsonify({'error': 'No mc_number found for user'}), 404
         verify_data, status_code = verify_carrier(mc_number)
-        # Check verification status
-        if status_code != 200 or not verify_data.json().get('verified'):
+        
+        # Check both status code and verified status
+        if status_code != 200 or not verify_data.get('verified'):
             return jsonify({
                 'user_info': dict(user_info),
                 'carrier_status': 'not_verified'
             }), 200
         
-        # return jsonify({'user_info': user_info.decode('utf-8'), }), 200
         return jsonify({
             'user_info': dict(user_info),
             'carrier_status': 'verified'
