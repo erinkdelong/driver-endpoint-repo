@@ -321,7 +321,7 @@ def get_pickup_number():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/verify_carrier', methods=['GET'])
+# @app.route('/verify_carrier', methods=['GET'])
 def verify_carrier():
     mc_number = request.args.get('mc_number')
     if not(mc_number):
