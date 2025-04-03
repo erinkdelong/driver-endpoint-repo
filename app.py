@@ -360,6 +360,10 @@ def get_pickup_number():
 
 @app.route('/verify_carrier', methods=['GET'])
 def verify_carrier():
+    mc_number = request.args.get('mc_number')
+    if not(mc_number):
+        return jsonify({"error": "mc_number parameter is required"}), 400
+    
     try:
         url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/{mc_number}?webKey={FMCSA_KEY}"
         response = requests.get(url)
