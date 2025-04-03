@@ -9,6 +9,7 @@ app = Flask(__name__)
 # FMCSA key
 FMCSA_KEY = os.getenv('FMCSA_KEY')
 API_BASE_URL = os.getenv('API_BASE_URL')
+print(f"API_BASE_URL: {API_BASE_URL}")
 
 print("Available environment variables:", [k for k in os.environ.keys()])
 
@@ -53,21 +54,24 @@ def home():
     return 'Hello, World!'
 
 def get_carrier_status(mc_number):
-    # Call verify_carrier and get the response
-    base_url = os.getenv("API_BASE_URL")  # Set this in your environment variables
+    base_url = os.getenv("API_BASE_URL")
     if not base_url:
         raise ValueError("API_BASE_URL is not set")
-    url = f"{base_url}/verify_carrier?mc_number={mc_number}"
-    verify_response = requests.get(url)
 
-    if verify_response.status_code == 200:
+    url = f"{base_url}/verify_carrier?mc_number={mc_number}"
+    print(f"Requesting: {url}")  # Debugging
+
+    try:
+        verify_response = requests.get(url)
+        verify_response.raise_for_status()  # Raise an error for HTTP errors
+
         data = verify_response.json()
         is_verified = data.get("verified", False)
-    else:
-        print(f"Request failed with status code {verify_response.status_code}")
+        return is_verified, verify_response
 
-
-    return is_verified, verify_response
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return False, None
 
 @app.route('/get_user_info')
 def get_user_info():
